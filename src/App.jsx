@@ -1,10 +1,11 @@
-// App.jsx
 import React, { useState } from "react";
-import ImageUploader from "./ImageUploader";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
-function App() {
+import Logo from "./Components/Logo";
+import Card from "./Components/Card";
+
+export default function App() {
   const [images, setImages] = useState([]);
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
@@ -59,7 +60,10 @@ function App() {
             canvas.height = h;
             canvas.getContext("2d").drawImage(imgEl, 0, 0, w, h);
 
-            const mime = format === "jpeg" ? "image/jpeg" : "image/webp";
+            let mime = "image/webp";
+            if (format === "jpeg") mime = "image/jpeg";
+            if (format === "png") mime = "image/png";
+
             canvas.toBlob(
               (blob) => {
                 const base = img.name.replace(/\.[^.]+$/, "") || "image";
@@ -86,18 +90,44 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex items-center ">
-      <div className=" h-full block justify-center">
-        <img src="./logo.svg" className="w-[20vw]" alt="Logo" />
-        <p>scegli</p>
-      </div>
+    <>
+      <div className="flex">
+        <Card
+          quality={quality}
+          setQuality={setQuality}
+          width={width}
+          setWidth={setWidth}
+          height={height}
+          setHeight={setHeight}
+          destination={destination}
+          setDestination={setDestination}
+          format={format}
+          setFormat={setFormat}
+          downloadAll={downloadAll}
+        />
 
-      <div className="flex items-center h-full">
-        <img src="./logo.svg" className="w-[20vw] inline-block" alt="Logo" />
-        <p>scegli</p>
+        <Logo
+          filesCounter={images.length}
+          onSelectFiles={(files) => {
+            const fileReaders = files.map((file) => {
+              return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () =>
+                  resolve({ name: file.name, dataUrl: reader.result });
+                reader.readAsDataURL(file);
+              });
+            });
+
+            Promise.all(fileReaders).then((loadedImages) => {
+              setImages(loadedImages);
+            });
+          }}
+        />
       </div>
-    </div>
+      {/* Cerchi decorativi */}
+      <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] bg-main opacity-30 rounded-full blur-[100px] z-[-1]" />
+      <div className="absolute bottom-[15%] right-[10%] w-[200px] h-[200px] bg-pink-300 opacity-20 rounded-full blur-[80px] z-[-1]" />
+      <div className="absolute top-[50%] left-[40%] w-[150px] h-[150px] bg-cyan-400 opacity-20 rounded-full blur-[80px] z-[-1]" />
+    </>
   );
 }
-
-export default App;

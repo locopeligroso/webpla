@@ -1,96 +1,64 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const ImageEditor = ({ imageData, onProcess }) => {
-  const [width, setWidth] = useState("");
-  const [height, setHeight] = useState("");
-  const [aspectRatio, setAspectRatio] = useState(null);
+const ImageEditor = ({ image }) => {
   const [format, setFormat] = useState("webp");
   const [quality, setQuality] = useState(0.8);
-
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => {
-      setAspectRatio(img.width / img.height);
-      setWidth(img.width);
-      setHeight(img.height);
-    };
-    img.src = imageData.dataUrl;
-  }, [imageData]);
-
-  const handleWidthChange = (val) => {
-    const w = parseInt(val);
-    setWidth(w);
-    if (aspectRatio) setHeight(Math.round(w / aspectRatio));
-  };
-
-  const handleHeightChange = (val) => {
-    const h = parseInt(val);
-    setHeight(h);
-    if (aspectRatio) setWidth(Math.round(h * aspectRatio));
-  };
+  const [convertedUrl, setConvertedUrl] = useState(null);
 
   const handleConvert = () => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = img.width;
+      canvas.height = img.height;
       const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, width, height);
-      const mime = format === "jpeg" ? "image/jpeg" : "image/webp";
-      const result = canvas.toDataURL(mime, quality);
-      onProcess(result);
+      ctx.drawImage(img, 0, 0);
+
+      const mimeType = format === "jpeg" ? "image/jpeg" : "image/webp";
+      const dataUrl = canvas.toDataURL(mimeType, quality);
+      setConvertedUrl(dataUrl);
     };
-    img.src = imageData.dataUrl;
+    img.src = image.dataUrl;
+  };
+
+  const getDownloadName = () => {
+    const baseName = image.name.split(".").slice(0, -1).join(".") || "immagine";
+    return `${baseName}.${format}`;
   };
 
   return (
-    <div className="card bg-base-100 shadow p-4 mt-6 space-y-4">
-      <div className="flex gap-4">
-        <input
-          type="number"
-          placeholder="Larghezza"
-          value={width}
-          onChange={(e) => handleWidthChange(e.target.value)}
-          className="input input-bordered w-24"
-        />
-        <input
-          type="number"
-          placeholder="Altezza"
-          value={height}
-          onChange={(e) => handleHeightChange(e.target.value)}
-          className="input input-bordered w-24"
-        />
-      </div>
-
-      <div className="flex gap-4 items-center">
-        <select
-          className="select select-bordered"
-          value={format}
-          onChange={(e) => setFormat(e.target.value)}
-        >
+    <div>
+      <div>
+        <label>Formato:</label>
+        <select value={format} onChange={(e) => setFormat(e.target.value)}>
           <option value="webp">WEBP</option>
           <option value="jpeg">JPEG</option>
         </select>
-
-        <div>
-          <label className="label">Compressione</label>
-          <input
-            type="range"
-            min="0.1"
-            max="1"
-            step="0.1"
-            value={quality}
-            onChange={(e) => setQuality(parseFloat(e.target.value))}
-            className="range range-primary"
-          />
-          <div className="text-sm mt-1">{quality}</div>
-        </div>
       </div>
 
-      <button onClick={handleConvert} className="btn btn-success">
-        Converti immagine
-      </button>
+      <div>
+        <label>Qualità:</label>
+        <input
+          type="range"
+          min="0.1"
+          max="1"
+          step="0.1"
+          value={quality}
+          onChange={(e) => setQuality(parseFloat(e.target.value))}
+        />
+        <span>{quality}</span>
+      </div>
+
+      <button onClick={handleConvert}>Converti</button>
+
+      {convertedUrl && (
+        <div>
+          <p>Download:</p>
+          <a href={convertedUrl} download={getDownloadName()}>
+            Scarica {getDownloadName()}
+          </a>
+        </div>
+      )}
     </div>
   );
 };

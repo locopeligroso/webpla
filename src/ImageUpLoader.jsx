@@ -1,38 +1,32 @@
-import React, { useRef } from "react";
+import React from "react";
 
-const ImageUploader = ({ onImageSelect }) => {
-  const inputRef = useRef();
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      alert("Seleziona un file immagine valido");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      onImageSelect({ file, dataUrl: reader.result });
-    };
-    reader.readAsDataURL(file);
+const ImageUploader = ({ onImagesSelect }) => {
+  const handleFiles = async (event) => {
+    const files = Array.from(event.target.files);
+    const images = await Promise.all(
+      files.map(
+        (file) =>
+          new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = (e) =>
+              res({ name: file.name, dataUrl: e.target.result });
+            reader.onerror = () => rej();
+            reader.readAsDataURL(file);
+          }),
+      ),
+    );
+    onImagesSelect(images);
   };
 
   return (
-    <div className="card bg-base-100 shadow p-4 items-center">
+    <div className="mb-4">
       <input
-        ref={inputRef}
         type="file"
         accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
+        multiple
+        onChange={handleFiles}
+        className="border border-gray-300 px-3 py-2 rounded"
       />
-      <button
-        onClick={() => inputRef.current.click()}
-        className="btn btn-primary"
-      >
-        Carica immagine
-      </button>
     </div>
   );
 };

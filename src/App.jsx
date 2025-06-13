@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState } from "react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -50,7 +51,7 @@ export default function App() {
               h = originalSizes[i].height;
             }
             if (!w && h) w = Math.round(h * (imgEl.width / imgEl.height));
-            if (!h && w) h = Math.round(w * (imgEl.width / imageEl.height));
+            if (!h && w) h = Math.round(w * (imgEl.width / imgEl.height));
             if (!w && !h) {
               w = imgEl.width;
               h = imgEl.height;
@@ -91,43 +92,43 @@ export default function App() {
 
   return (
     <>
-      <div className="flex">
-        <Card
-          quality={quality}
-          setQuality={setQuality}
-          width={width}
-          setWidth={setWidth}
-          height={height}
-          setHeight={setHeight}
-          destination={destination}
-          setDestination={setDestination}
-          format={format}
-          setFormat={setFormat}
-          downloadAll={downloadAll}
-        />
+      <div className="flex flex-col-reverse md:flex-row w-full h-screen">
+        <div className="flex-1 flex items-center justify-center h-1/2 md:h-full">
+          <Card
+            quality={quality}
+            setQuality={setQuality}
+            width={width}
+            setWidth={setWidth}
+            height={height}
+            setHeight={setHeight}
+            destination={destination}
+            setDestination={setDestination}
+            format={format}
+            setFormat={setFormat}
+            downloadAll={downloadAll}
+          />
+        </div>
 
-        <Logo
-          filesCounter={images.length}
-          onSelectFiles={(files) => {
-            const fileReaders = files.map((file) => {
-              return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () =>
-                  resolve({ name: file.name, dataUrl: reader.result });
-                reader.readAsDataURL(file);
+        <div className="flex-1 flex items-center justify-center h-1/2 md:h-full">
+          <Logo
+            filesCounter={images.length}
+            onSelectFiles={(files) => {
+              const fileReaders = files.map((file) => {
+                return new Promise((resolve) => {
+                  const reader = new FileReader();
+                  reader.onload = () =>
+                    resolve({ name: file.name, dataUrl: reader.result });
+                  reader.readAsDataURL(file);
+                });
               });
-            });
 
-            Promise.all(fileReaders).then((loadedImages) => {
-              setImages(loadedImages);
-            });
-          }}
-        />
+              Promise.all(fileReaders).then((loadedImages) => {
+                setImages(loadedImages);
+              });
+            }}
+          />
+        </div>
       </div>
-      {/* Cerchi decorativi */}
-      <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] bg-main opacity-30 rounded-full blur-[100px] z-[-1]" />
-      <div className="absolute bottom-[15%] right-[10%] w-[200px] h-[200px] bg-pink-300 opacity-20 rounded-full blur-[80px] z-[-1]" />
-      <div className="absolute top-[50%] left-[40%] w-[150px] h-[150px] bg-cyan-400 opacity-20 rounded-full blur-[80px] z-[-1]" />
     </>
   );
 }

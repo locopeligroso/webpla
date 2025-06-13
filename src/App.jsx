@@ -43,28 +43,25 @@ export default function App() {
           imgEl.onload = () => {
             const canvas = document.createElement("canvas");
 
+            const originalW = imgEl.width;
+            const originalH = imgEl.height;
             let w = width ? parseInt(width) : null;
             let h = height ? parseInt(height) : null;
 
-            if (!w && !h && originalSizes[i]) {
-              w = originalSizes[i].width;
-              h = originalSizes[i].height;
-            }
-            if (!w && h) w = Math.round(h * (imgEl.width / imgEl.height));
-            if (!h && w) h = Math.round(w * (imgEl.width / imgEl.height));
-            if (!w && !h) {
-              w = imgEl.width;
-              h = imgEl.height;
+            if (w && !h) {
+              h = Math.round(w * (originalH / originalW));
+            } else if (!w && h) {
+              w = Math.round(h * (originalW / originalH));
+            } else if (!w && !h) {
+              w = originalW;
+              h = originalH;
             }
 
             canvas.width = w;
             canvas.height = h;
             canvas.getContext("2d").drawImage(imgEl, 0, 0, w, h);
 
-            let mime = "image/webp";
-            if (format === "jpeg") mime = "image/jpeg";
-            if (format === "png") mime = "image/png";
-
+            const mime = format === "jpeg" ? "image/jpeg" : "image/webp";
             canvas.toBlob(
               (blob) => {
                 const base = img.name.replace(/\.[^.]+$/, "") || "image";

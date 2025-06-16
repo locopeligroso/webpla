@@ -1,16 +1,29 @@
-export default function Button({ text, onClick, selected, cta }) {
+export default function Button({
+  text,
+  onClick,
+  selected = false,
+  cta = false,
+}) {
   const base =
-    "px-4 py-2 rounded-xl inline-flex items-center font-bold text-lg font-inter uppercase transition";
+    'px-6 py-2 rounded-xl w-full min-w-16 font-bold text-sm uppercase  font-inter'
 
-  const variant = cta
-    ? "bg-black text-white"
-    : selected
-      ? "bg-main text-white"
-      : "bg-white text-main border border-main";
+  let variant = ''
+
+  if (cta) {
+    variant = 'bg-black text-white'
+  } else if (selected) {
+    variant = 'bg-pink-500 text-white'
+  } else {
+    variant =
+      'bg-white text-pink-500 border border-pink-500'
+  }
 
   return (
-    <button onClick={onClick} className={`${base} ${variant}`}>
+    <button
+      onClick={onClick}
+      className={`${base} ${variant}`}
+    >
       {text}
     </button>
-  );
+  )
 }

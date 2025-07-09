@@ -21,51 +21,72 @@ export default function Card({ images, setImages }) {
     const tasks = images.map(
       (img) =>
         new Promise((resolve) => {
-          const imgEl = new Image()
-          imgEl.onload = () => {
+          const image = new Image()
+          image.onload = () => {
             const canvas = document.createElement('canvas')
-            const originalW = imgEl.width
-            const originalH = imgEl.height
+            const ctx = canvas.getContext('2d')
+            const originalW = image.width
+            const originalH = image.height
+
             const val = parseInt(resizeValue)
-            let w = originalW,
-              h = originalH
+            let w = originalW
+            let h = originalH
 
             if (resizeMode === 'width' && val) {
               w = val
-              h = Math.round(w * (originalH / originalW))
+              h = Math.round((val * originalH) / originalW)
             } else if (resizeMode === 'height' && val) {
               h = val
-              w = Math.round(h * (originalW / originalH))
+              w = Math.round((val * originalW) / originalH)
             }
 
             canvas.width = w
             canvas.height = h
-            canvas.getContext('2d').drawImage(imgEl, 0, 0, w, h)
+            ctx.drawImage(image, 0, 0, w, h)
 
-            const mime = format === 'jpeg' ? 'image/jpeg' : `image/${format}`
+            const mime =
+              format === 'jpeg'
+                ? 'image/jpeg'
+                : format === 'png'
+                  ? 'image/png'
+                  : 'image/webp'
+
+            const supportQuality =
+              format === 'webp' || format === 'jpeg'
+
             canvas.toBlob(
               (blob) => {
-                const base = img.name.replace(/\.[^.]+$/, '') || 'image'
-                const prefix = destination ? `${destination}-` : ''
+                const base =
+                  img.name.replace(/\.[^.]+$/, '') ||
+                  'image'
+                const prefix = destination
+                  ? `${destination}-`
+                  : ''
                 zip.file(`${prefix}${base}.${format}`, blob)
                 resolve()
               },
               mime,
-              quality,
+              supportQuality ? quality : undefined,
             )
           }
-          imgEl.src = img.dataUrl
+
+          image.src = img.dataUrl
         }),
     )
 
     await Promise.all(tasks)
     const blob = await zip.generateAsync({ type: 'blob' })
-    saveAs(blob, destination ? `${destination}.zip` : 'immagini_convertite.zip')
+    saveAs(
+      blob,
+      destination
+        ? `${destination}.zip`
+        : 'immagini_convertite.zip',
+    )
   }
 
   return (
-    <div className="card-container ">
-      {/* Formato */}
+    <div className="card-container">
+      {/* Format */}
       <Section label="Format">
         <div className="flex gap-4">
           {formats.map((f) => (
@@ -79,25 +100,31 @@ export default function Card({ images, setImages }) {
         </div>
       </Section>
 
-      {/* Qualità */}
-      <Section label="Quality">
-        <div className="flex items-center gap-4 w-full">
-          <input
-            type="range"
-            min="0.1"
-            max="1"
-            step="0.1"
-            value={quality}
-            onChange={(e) => setQuality(parseFloat(e.target.value))}
-            className="w-full h-2.5 bg-zinc-300 rounded-full"
-          />
-          <span className="text-black text-lg">{quality}</span>
-        </div>
-      </Section>
+      {/* Quality (only for jpeg and webp) */}
+      {(format === 'webp' || format === 'jpeg') && (
+        <Section label="Quality">
+          <div className="flex w-full items-center gap-4">
+            <input
+              type="range"
+              min="0.1"
+              max="1"
+              step="0.1"
+              value={quality}
+              onChange={(e) =>
+                setQuality(parseFloat(e.target.value))
+              }
+              className="h-2.5 w-full rounded-full bg-zinc-300"
+            />
+            <span className="text-lg text-black">
+              {quality}
+            </span>
+          </div>
+        </Section>
+      )}
 
       <Divider />
 
-      {/* Dimensione */}
+      {/* Size */}
       <Section label="Size">
         <InputRow
           type="number"
@@ -117,12 +144,15 @@ export default function Card({ images, setImages }) {
             onClick={() => setResizeMode('height')}
           />
         </div>
-        <Button text="Dimensioni originali" onClick={resetSizes} />
+        <Button
+          text="Dimensioni originali"
+          onClick={resetSizes}
+        />
       </Section>
 
       <Divider />
 
-      {/* Nome archivio */}
+      {/* Archive name */}
       <Section label="Name">
         <InputRow
           type="text"
@@ -141,13 +171,15 @@ export default function Card({ images, setImages }) {
 
 function Section({ label, children }) {
   return (
-    <div className="flex flex-col gap-2 w-full">
-      <p className="text-sm font-bold uppercase text-gray-600">{label}</p>
+    <div className="flex w-full flex-col gap-2">
+      <p className="text-sm font-bold uppercase text-gray-600">
+        {label}
+      </p>
       <div className="flex flex-col gap-3">{children}</div>
     </div>
   )
 }
 
 function Divider() {
-  return <div className="w-full h-[2px] bg-pink-500 " />
+  return <div className="h-[2px] w-full bg-pink-500" />
 }

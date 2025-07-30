@@ -1,29 +1,266 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ========== RESET & BASE ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
+/* ========== LAYOUT GENERALE ========== */
+.app {
+  display: flex;
+  flex-direction: column-reverse;
+  min-height: 100vh;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .app {
+    flex-direction: row;
+    height: 100vh;
+  }
+}
+
+/* ========== AREA ANTEPRIMA (sinistra su desktop) ========== */
+.image-preview-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  height: 50%;
+  background-image: linear-gradient(
+    135deg,
+    #e0e0e0 25%,
+    #ffffff 25%,
+    #ffffff 50%,
+    #e0e0e0 50%,
+    #e0e0e0 75%,
+    #ffffff 75%,
+    #ffffff 100%
+  );
+  background-size: 20px 20px;
+}
+
+@media (min-width: 768px) {
+  .image-preview-area {
+    height: 100%;
+  }
+}
+
+/* ========== AREA LOGO / UPLOAD (destra su desktop) ========== */
+.logo-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2rem;
+  padding: 2rem;
+  min-height: 200px;
+}
+
+@media (min-width: 768px) {
+  .logo-panel {
+    padding: 2rem 4rem;
+    height: 100%;
+  }
+}
+
+.logo-panel img {
+  width: 60%;
+}
+
+@media (min-width: 768px) {
+  .logo-panel img {
+    width: 66.6%;
+  }
+}
+
+.upload-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .upload-controls {
+    width: 66.6%;
+  }
+}
+
+.file-counter {
+  font-size: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+/* ========== CARD ========== */
 .card-container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1.5rem;
-  margin-left: 1.5rem;
-  margin-right: 1.5rem;
+  padding: 1rem;
+  margin: 1.5rem auto;
   border-radius: 1rem;
   max-width: 24rem;
   width: 100%;
-
   background-color: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(2px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow:
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -4px rgba(0, 0, 0, 0.1);
-
   background-image: linear-gradient(
     to bottom right,
     rgba(255, 255, 255, 1),
     rgba(255, 255, 255, 0.1),
     rgba(255, 255, 255, 0.2)
   );
+}
+
+/* ========== SEZIONI ========== */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.divider {
+  height: 2px;
+  width: 100%;
+  background-color: #ec4899;
+}
+
+/* ========== INPUT ========== */
+.input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-row label {
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #111827;
+}
+
+.input-field {
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  border: none;
+  outline: 1px solid #ec4899;
+  outline-offset: -1px;
+
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+/* ========== SLIDER QUALITÀ ========== */
+.quality-slider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.range-slider {
+  height: 10px;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: #d4d4d8;
+}
+
+.quality-value {
+  font-size: 1.125rem;
+  color: #111;
+}
+
+/* ========== BUTTON ========== */
+.btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  min-width: 4rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-small {
+  width: auto;
+  min-width: 5rem;
+}
+
+.btn-cta {
+  background-color: #000;
+  color: #fff;
+}
+
+.btn-selected {
+  background-color: #ec4899;
+  color: #fff;
+}
+
+.btn-default {
+  background-color: #fff;
+  color: #ec4899;
+  border: 1px solid #ec4899;
+}
+
+.btn-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-expand {
+  flex: 1 1 30%;
+  min-width: 0;
+}
+
+.btn-half {
+  flex: 1 1 45%;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* ========== UTILITY ========== */
+.hidden {
+  display: none;
 }

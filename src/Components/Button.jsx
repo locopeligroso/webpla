@@ -3,25 +3,20 @@ export default function Button({
   onClick,
   selected = false,
   cta = false,
+  className = '',
 }) {
-  const base =
-    'px-6 py-2 rounded-xl w-full min-w-16 font-bold text-sm uppercase  font-inter'
-
-  let variant = ''
+  let variantClass = 'btn-default'
 
   if (cta) {
-    variant = 'bg-black text-white'
+    variantClass = 'btn-cta'
   } else if (selected) {
-    variant = 'bg-pink-500 text-white'
-  } else {
-    variant =
-      'bg-white text-pink-500 border border-pink-500'
+    variantClass = 'btn-selected'
   }
 
   return (
     <button
       onClick={onClick}
-      className={`${base} ${variant}`}
+      className={`btn ${variantClass} ${className}`}
     >
       {text}
     </button>

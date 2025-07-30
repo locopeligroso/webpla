@@ -1,5 +1,5 @@
-import Button from './Button'
 import { useRef } from 'react'
+import Button from './Button'
 
 export default function Logo({
   filesCounter,
@@ -19,20 +19,17 @@ export default function Logo({
   }
 
   return (
-    <div className="flex h-48 w-full flex-col items-center justify-center gap-8 px-16 py-8 md:h-full md:w-1/2">
-      <img
-        src="./logo.svg"
-        className="w-3/5 md:w-2/3"
-        alt="Logo"
-      />
+    <div className="logo-panel">
+      <img src="./logo.svg" alt="Logo" />
 
-      <div className="flex w-full flex-row items-center gap-2 md:w-2/3">
+      <div className="upload-controls">
         <Button
           text="scegli files"
-          cta="cta"
+          cta
           onClick={triggerFileInput}
         />
 
+        {/* input invisibile ma funzionante */}
         <input
           ref={inputRef}
           id="file-upload"
@@ -43,9 +40,7 @@ export default function Logo({
           className="hidden"
         />
 
-        <p className="w-full text-lg">
-          {filesCounter} files
-        </p>
+        <p className="file-counter">{filesCounter} files</p>
       </div>
     </div>
   )
